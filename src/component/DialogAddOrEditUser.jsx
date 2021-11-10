@@ -75,20 +75,19 @@ export default function DialogAddOrEditUser(props){
 		})
 	}
 	const addUser = () => {
-		var last = redux.users[redux.users.length - 1]
-		if(last){
-			validate(() => {
-				dispatch({
-					type: 'adduser',
-					data: Object.assign(
-						data,
-						{id: Number(last.id) + 1}
-					)
-				})
-				onClose()
-				setdata(defaultData)
+		var last = redux.users[redux.users.length - 1],
+		assign = Object.assign(
+			data,
+			{id: Number(last ? last.id: 0) + 1}
+		)
+		validate(() => {
+			dispatch({
+				type: 'adduser',
+				data: assign
 			})
-		}
+			onClose()
+			setdata(defaultData)
+		})
 	}
 	const updateUser = () => {
 		validate(() => {
