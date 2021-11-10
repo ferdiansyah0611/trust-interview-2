@@ -1,0 +1,12 @@
+body{
+	font-family: 'Roboto', sans-serif;
+}
+.overflow-auto{
+	overflow: auto;
+}
+.app_inputsearch{
+	display: flex;
+}
+.app_inputsearch > div:nth-child(1){
+	flex-grow: 1;
+}
