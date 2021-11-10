@@ -11,8 +11,15 @@ import {
 } from '@mui/material'
 
 
-var defaultData = {
-		id: '', name: '', email: '', nip: '', telp: ''
+var initdata = {
+		name: '', email: '', nip: '', telp: ''
+}
+var defaultData = Object.assign({...initdata}, {id: ''})
+var dataValidate = {
+	name: {min: 2, max: 20},
+	email: {regexp: /\S+@\S+\.\S+$/},
+	nip: {min: 17},
+	telp: {min: 11}
 }
 
 export default function DialogAddOrEditUser(props){
@@ -27,11 +34,15 @@ export default function DialogAddOrEditUser(props){
 	const dispatch = useDispatch()
 	// state
 	const [data, setdata] = useState(defaultData)
+	const [onError, seterror] = useState({
+		name: '', email: '', nip: '', telp: ''
+	})
 	const state = React.useMemo(() => {
 		return data
 	}, [data])
 	// watch
 	useEffect(() => {
+		seterror(initdata)
 		if(detail){
 			setdata(detail)
 		}else{
@@ -41,12 +52,23 @@ export default function DialogAddOrEditUser(props){
 	// action
 	const validate = (success) => {
 		var isValidate = []
-		Object.keys(data || {}).forEach((found, key) => {
-			if(found !== 'id' && data[found].length >= 3){
+		Object.keys(dataValidate || {}).forEach((name, key) => {
+			if(dataValidate[name].min && !(data[name].length >= dataValidate[name].min)){
 				isValidate.push(true)
+				seterror({...onError, [name]: name + ' must be have min ' + dataValidate[name].min + ' length'})
+				// console.log(name)
 			}
-			if(key === (Object.keys(data || {}).length - 1)){
-				if(isValidate.length === (Object.keys(data || {}).length - 1)){
+			if(dataValidate[name].max && !(data[name].length <= dataValidate[name].max)){
+				isValidate.push(true)
+				seterror({...onError, [name]: name + ' must be have max ' + dataValidate[name].max + ' length'})
+				// console.log(name)
+			}
+			if(dataValidate[name].regexp && !data[name].match(dataValidate[name].regexp)){
+				isValidate.push(true)
+				seterror({...onError, [name]: name + ' must be email validation'})
+			}
+			else if(key === (Object.keys(dataValidate || {}).length - 1)){
+				if(isValidate.length === 0){
 					success()
 				}
 			}
@@ -90,16 +112,16 @@ export default function DialogAddOrEditUser(props){
 			<DialogContent>
 				<Grid spacing={2} container>
 					<Grid xs={12} md={6} item>
-						<TextField required type="text" name="name" value={state.name} onChange={handleinput} fullWidth label="Name"/>
+						<TextField helperText={onError.name} required type="text" name="name" value={state.name} onChange={handleinput} fullWidth label="Name"/>
 					</Grid>
 					<Grid xs={12} md={6} item>
-						<TextField required type="number" name="nip" value={state.nip} onChange={handleinput} fullWidth label="NIP"/>
+						<TextField helperText={onError.nip} required type="number" name="nip" value={state.nip} onChange={handleinput} fullWidth label="NIP"/>
 					</Grid>
 					<Grid xs={12} md={6} item>
-						<TextField required type="tel" name="telp" value={state.telp} onChange={handleinput} fullWidth label="No. Telp"/>
+						<TextField helperText={onError.telp} required type="tel" name="telp" value={state.telp} onChange={handleinput} fullWidth label="No. Telp"/>
 					</Grid>
 					<Grid xs={12} md={6} item>
-						<TextField required type="email" name="email" value={state.email} onChange={handleinput} fullWidth label="Email"/>
+						<TextField helperText={onError.email} required type="email" name="email" value={state.email} onChange={handleinput} fullWidth label="Email"/>
 					</Grid>
 				</Grid>
 			</DialogContent>
