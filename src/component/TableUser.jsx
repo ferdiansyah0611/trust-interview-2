@@ -227,7 +227,7 @@ export default function TabelUser(){
 									<NavigateNextIcon/>
 								</IconButton>
 							</Tooltip>
-							<span style={{marginLeft: 10}}>Page {paginate.page}/{Math.ceil(count / paginate.row)}</span>
+							<span style={{marginLeft: 10}}>Page {count === 0 ? 0: paginate.page}/{Math.ceil(count / paginate.row)}</span>
 						</div>
 					</div>
 				</Grid>
